@@ -21,5 +21,7 @@ from mainapp.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/vendors/', VendorListorCreate.as_view()),
-    path('api/vendors/<int:vendor_id>', SpecificVendor.as_view()),
+    path('api/vendors/<str:vendor_id>', SpecificVendor.as_view()),
+    path('api/purchase_orders/', PurchaseOrders.as_view()),
+    path('api/purchase_orders/<str:po_id>', SpecificPurchaseOrder.as_view())
 ]

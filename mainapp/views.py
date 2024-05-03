@@ -32,12 +32,12 @@ class VendorListorCreate(APIView):
 class SpecificVendor(APIView):
 
     def get(self, request, vendor_id):
-        vendor = Vendor.objects.get(id=vendor_id)
+        vendor = Vendor.objects.get(vendor_code=vendor_id)
         serialized_data = VendorSerializer(vendor)
         return Response(serialized_data.data)
 
     def put(self, request, vendor_id):
-        vendor = Vendor.objects.get(id=vendor_id)
+        vendor = Vendor.objects.get(vendor_code=vendor_id)
         serialized_data = VendorSerializer(vendor, data = request.data)
         if serialized_data.is_valid():
             serialized_data.save()
@@ -45,6 +45,42 @@ class SpecificVendor(APIView):
         return Response(serialized_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, vendor_id):
-        vendor = Vendor.objects.get(id=vendor_id)
+        vendor = Vendor.objects.get(vendor_code=vendor_id)
         vendor.delete()
         return Response(status=status.HTTP_200_OK)
+
+class PurchaseOrders(APIView):
+
+    def get(self, request, format=None):
+        purchase_orders = PurchaseOrder.objects.all()
+        serializer = PurchaseOrderSerializer(purchase_orders, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serialized_data = PurchaseOrderSerializer(data=request.data)
+        if serialized_data.is_valid():
+            serialized_data.save()
+            return Response(serialized_data.data, status=status.HTTP_201_CREATED)
+        return Response(serialized_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SpecificPurchaseOrder(APIView):
+
+    def get(self, request, po_id):
+        purchase_order = PurchaseOrder.objects.get(po_number=po_id)
+        serialized_data = PurchaseOrderSerializer(purchase_order)
+        return Response(serialized_data.data)
+
+    def put(self, request, po_id):
+        purchase_orders = PurchaseOrder.objects.get(po_number=po_id)
+        serialized_data = PurchaseOrderSerializer(purchase_orders, data = request.data)
+        if serialized_data.is_valid():
+            serialized_data.save()
+            return Response(serialized_data.data, status=status.HTTP_200_OK)
+        return Response(serialized_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, po_id):
+        purchase_order = PurchaseOrder.objects.get(po_number=po_id)
+        purchase_order.delete()
+        return Response(status=status.HTTP_200_OK)
+
