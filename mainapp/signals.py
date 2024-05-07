@@ -9,7 +9,7 @@ def calculate_delivery_rate(vendor):
     if count_completed_orders == 0:
         on_time_delivery_rate = 0
     on_time_orders = completed_orders.filter(delivery_date__lte=timezone.now())
-    on_time_delivery_rate = (on_time_orders.count() / count_completed_orders) * 100
+    on_time_delivery_rate = (on_time_orders.count()/count_completed_orders) * 100
     vendor.on_time_delivery_rate = on_time_delivery_rate
     vendor.save()
 
@@ -39,6 +39,7 @@ def fullfilment_rate(vendor):
     all_completed_orders = PurchaseOrder.objects.filter(vendor=vendor, status='completed')
     if all_order_count > 0:
         vendor.fullfillment_rate = all_completed_orders/PurchaseOrder.objects.filter(vendor=vendor).count()
+        vendor.save()
 
 
 @receiver(post_save, sender=PurchaseOrder)
@@ -47,7 +48,11 @@ def calculate_on_time_delivery_rate(sender, instance, created):
         calculate_delivery_rate(instance.vendor)
         fullfilment_rate(instance.vendor)
         new_hp = HistoricalPerformance(vendor = instance.vendor, date = datetime.now(),
-                                       on_time_delivery_rate = instance.vendor.on_time_delivery_rate)
+                                       on_time_delivery_rate = instance.vendor.on_time_delivery_rate,
+                                       quality_rating_avg = instance.vendor.quality_rating_avg,
+                                       average_response_time = instance.vendor.average_response_time,
+                                       fulfillment_rate = instance.vendor.fullfilment_rate)
+        new_hp.save()
     if not created and instance.status == 'completed' and instance.quality_rating != None:
         average_quality_rating(instance.vendor)
     if instance.acknowledged_data is not None:
