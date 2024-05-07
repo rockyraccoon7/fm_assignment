@@ -1,4 +1,9 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .views import calculate_on_time_delivery_rate
+
+
 
 class Vendor(models.Model):
     name = models.CharField(max_length=255)
@@ -12,6 +17,7 @@ class Vendor(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class PurchaseOrder(models.Model):
     po_number = models.CharField(max_length=50, unique=True)
