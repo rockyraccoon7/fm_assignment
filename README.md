@@ -45,7 +45,8 @@ Running the Test Suite
 This command will execute all the tests defined in the tests.py files within the project. You should see the output indicating the success or failure of each test case.
 
 Additional Notes
-    •	Ensure that you have set up the database and configured the Django settings appropriately before running the test suite.
+
+     •	Ensure that you have set up the database and configured the Django settings appropriately before running the test suite.
 
     •	Modify the settings.py file if necessary to use the correct database configuration and other settings for your environment.
 
