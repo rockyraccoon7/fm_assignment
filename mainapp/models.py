@@ -26,7 +26,7 @@ class PurchaseOrder(models.Model):
     items = models.JSONField()
     quantity = models.IntegerField()
     status = models.CharField(max_length=50, choices=(('pending', 'pending'), ('completed','completed'),
-                                                      ('canclled', 'cancelled')))
+                                                      ('cancelled', 'cancelled')), default="pending")
     quality_rating = models.FloatField(null=True)
     issue_date = models.DateTimeField()
     acknowledgment_date = models.DateTimeField(null=True)

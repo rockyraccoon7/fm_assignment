@@ -5,6 +5,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from datetime import datetime
 
 from .models import *
 from .serializers import *
@@ -84,3 +85,18 @@ class SpecificPurchaseOrder(APIView):
         purchase_order.delete()
         return Response(status=status.HTTP_200_OK)
 
+class VendorPerformance(APIView):
+    def get(self, request, vendor_id):
+        metrics = Vendor.objects.get(vendor_id=vendor_id).fields('on_time_delivery_rate',
+                                                                 'quality_rating_avg',
+                                                                 'average_response_time',
+                                                                 'fulfillment_rate')
+        serialized_metrics = VendorSerializer(metrics)
+        return Response(serialized_metrics.data)
+
+class AcknowledgeOrder(APIView):
+    def post(self, request, po_id):
+        purchase_order = PurchaseOrder.objects.get(po_number=po_id)
+        purchase_order.acknowledgment_date = datetime.now()
+        purchase_order.save()
+        return Response(status=status.HTTP_200_OK)

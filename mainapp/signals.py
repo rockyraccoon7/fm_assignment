@@ -2,6 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import PurchaseOrder, HistoricalPerformance
 from datetime import timezone, datetime
+from django.db.models import Q
 
 def calculate_delivery_rate(vendor):
     completed_orders = PurchaseOrder.objects.filter(vendor=vendor, status='completed')
@@ -14,7 +15,7 @@ def calculate_delivery_rate(vendor):
     vendor.save()
 
 def average_quality_rating(vendor):
-    completed_orders = PurchaseOrder.objects.filter(vendor=vendor, status='completed', quality_rating!=None)
+    completed_orders = PurchaseOrder.objects.filter(vendor=vendor, status='completed', ~Q(quality_rating=None))
     count_completed_orders = completed_orders.count()
     total_qr, aqr = 0, 0
     if not count_completed_orders == 0:
@@ -44,6 +45,7 @@ def fullfilment_rate(vendor):
 
 @receiver(post_save, sender=PurchaseOrder)
 def calculate_on_time_delivery_rate(sender, instance, created):
+    print("signal received")
     if not created and instance.status == 'completed':
         calculate_delivery_rate(instance.vendor)
         fullfilment_rate(instance.vendor)
