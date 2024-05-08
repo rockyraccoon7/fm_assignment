@@ -46,6 +46,8 @@ This command will execute all the tests defined in the tests.py files within the
 
 Additional Notes
     •	Ensure that you have set up the database and configured the Django settings appropriately before running the test suite.
+
     •	Modify the settings.py file if necessary to use the correct database configuration and other settings for your environment.
+
     •	If any test fails, review the error messages to identify the issues and make necessary corrections to the codebase.
 
