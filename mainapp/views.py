@@ -32,21 +32,21 @@ class VendorListorCreate(APIView):
 
 class SpecificVendor(APIView):
 
-    def get(self, request, vendor_id):
-        vendor = Vendor.objects.get(vendor_code=vendor_id)
+    def get(self, request, vendor_code):
+        vendor = Vendor.objects.get(vendor_code=vendor_code)
         serialized_data = VendorSerializer(vendor)
         return Response(serialized_data.data)
 
-    def put(self, request, vendor_id):
-        vendor = Vendor.objects.get(vendor_code=vendor_id)
+    def put(self, request, vendor_code):
+        vendor = Vendor.objects.get(vendor_code=vendor_code)
         serialized_data = VendorSerializer(vendor, data = request.data)
         if serialized_data.is_valid():
             serialized_data.save()
             return Response(serialized_data.data, status=status.HTTP_200_OK)
         return Response(serialized_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, vendor_id):
-        vendor = Vendor.objects.get(vendor_code=vendor_id)
+    def delete(self, request, vendor_code):
+        vendor = Vendor.objects.get(vendor_code=vendor_code)
         vendor.delete()
         return Response(status=status.HTTP_200_OK)
 
@@ -86,12 +86,9 @@ class SpecificPurchaseOrder(APIView):
         return Response(status=status.HTTP_200_OK)
 
 class VendorPerformance(APIView):
-    def get(self, request, vendor_id):
-        metrics = Vendor.objects.get(vendor_id=vendor_id).fields('on_time_delivery_rate',
-                                                                 'quality_rating_avg',
-                                                                 'average_response_time',
-                                                                 'fulfillment_rate')
-        serialized_metrics = VendorSerializer(metrics)
+    def get(self, request, vendor_code):
+        metrics = HistoricalPerformance.objects.filter(vendor=Vendor.objects.get(vendor_code=vendor_code).id)
+        serialized_metrics = HistoricalPerformanceSerializer(metrics)
         return Response(serialized_metrics.data)
 
 class AcknowledgeOrder(APIView):

@@ -12,5 +12,5 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
 
 class HistoricalPerformanceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PurchaseOrder
+        model = HistoricalPerformance
         fields = "__all__"
